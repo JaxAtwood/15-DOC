@@ -1,33 +1,43 @@
 import React, {useState} from 'react';
+import Movie from './Movie';
+import {useLocalStorage} from './useLocalStorage';
 
 
-const Home = props => {
+const Home = () => {
 
-    const [word, setWord] = useState('')
-    const [getWord, setGetWord] = useState(JSON.parse(window.localStorage.getItem('word')));
+    const [storedData, setStoredData, storeList] = useLocalStorage();
+    const [input, setInput] = useState('')
 
-
-    const saveWord = word => {
-        window.localStorage.setItem('word', JSON.stringify(word));
-    }
     const handleChange = e => {
-        setWord(e.target.value)
+        e.preventDefault();
+        setInput(e.target.value);
     }
+
+    const submitHandler = e =>{
+        e.preventDefault();
+        setStoredData([...storedData, input]);
+        setInput('');
+    }
+
 return (
     <div>
-        <h1>Hello world from home component</h1>
+        <h1>Add a movie to watch list</h1>
         <form>
             <input 
             type="text"
-            placeholder='add some text here'
-            value={word}
+            placeholder='add movie here'
+            value={input}
             onChange={handleChange}
             />
         </form>
-        <button onClick={()=> saveWord(word)}>Add to Local Storage</button>
+        <button onClick={submitHandler}>Add movie to watch list</button>
+        <h1>Watch List</h1>
+        <div>{storedData.map(movie => (
+            <Movie movie={movie} key={movie}/> 
+        ))}</div>
+        <button onClick={storeList}>Add to Local Storage</button>
         <button>Clear Local Storage </button>
-        <button>Clear Input</button>
-        <p>{getWord}</p>
+        <button>Removed Watched Movie</button>
     </div>
 )
 }
